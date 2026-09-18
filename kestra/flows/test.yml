@@ -1,0 +1,36 @@
+id: mbta_realtime
+namespace: mbta
+
+tasks:
+  - id: extract
+    type: io.kestra.plugin.scripts.python.Commands
+
+    taskRunner:
+      type: io.kestra.plugin.scripts.runner.docker.Docker
+
+    containerImage: mbta-python:latest
+    pythonVersion: "3.14"
+    inputFiles:
+      creds.json: "{{ secret('GCP_SERVICE_ACCOUNT') }}"
+    
+    env:
+      PYTHONPATH: /app/repo
+      GOOGLE_APPLICATION_CREDENTIALS: creds.json
+      MBTA_API_KEY: "{{ secret(key='MBTA_API_KEY') }}"
+      GCS_BUCKET_NAME: "{{ secret(key='GCS_BUCKET_NAME') }}"
+    commands:
+      - python -m ingestion.run_batch_ingestion --year 2022
+    
+  - id: run_load
+    type: io.kestra.plugin.gcp.bigquery.LoadFromGcs
+    serviceAccount: "{{ secret('GCP_SERVICE_ACCOUNT') }}"
+    projectId: "{{ secret('GCP_PROJECT_ID') }}"
+    from:
+      - "gs://{{ secret('GCS_BUCKET_NAME') }}/raw/bus_historical/year=*/*.csv.gz"   # match whatever path/pattern your extract task writes
+    destinationTable: "my_project.mbta_raw.realtime"
+    format: JSON
+    autodetect: true
+    writeDisposition: WRITE_APPEND
+    createDisposition: CREATE_IF_NEEDED
+  
+  

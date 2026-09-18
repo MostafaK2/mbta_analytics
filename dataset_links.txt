@@ -1,0 +1,31 @@
+Theres a bunch of dataset links that we have to deal with: 
+(2022 - 2026)
+
+1. MBTA GTFS Archive (LAMP) https://performancedata.mbta.com/
+    - https://performancedata.mbta.com/lamp/gtfs_archive/YYYY/feed_info.parquet
+    - https://performancedata.mbta.com/lamp/gtfs_archive/YYYY/GTFS_ARCHIVE.db.gz
+
+    Contains Archived proposed schedules, routes and other stuffs
+    - Fact Tables for historical data can be created with this
+
+2. GTFS-rt (for real time analytics) using API key
+   - API_KEY = "your_api_key_here"  # from api-v3.mbta.com
+    BASE_URL = "https://api-v3.mbta.com"
+    HEADERS = {"x-api-key": API_KEY}
+    - More research on this later
+
+3. (Focusing on just Bus right now)
+    - https://www.arcgis.com/sharing/rest/content/items/<item_id>/data 
+
+    - 2026: 9d8a8cad277545c984c1b25ed10b7d3c
+    - 2025: 924df13d845f4907bb6a6c3ed380d57a
+    - 2024: 96c77138c3144906bce93d0257531b6a
+    - 2023: b7b36fdb7b3a4728af2fccc78c2ca5b7
+    - 2022: ef464a75666349f481353f16514c06d0
+   
+(Optional) 4. Later Rapid Transit and Commuter Rail
+
+(Optional) 5. Later Weather API
+
+
+
