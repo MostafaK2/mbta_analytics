@@ -1,10 +1,10 @@
 version: 2
 
 sources:
-  - name: staging
+  - name: stg
     database: dtc-de-course-507306
     schema: mk_mbta_dataset
 
     tables:
-      - bus_historical
-      - raw_prediction
+      - name: bus_historical
+      - name: raw_predictions

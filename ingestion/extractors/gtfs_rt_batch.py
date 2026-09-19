@@ -19,12 +19,8 @@ from ingestion.config import (
     MBTA_API_HEADERS,
 )
  
-MAX_WORKERS = 40
+MAX_WORKERS = 20
 BUS_ROUTE_TYPE = 3
-
-
- 
- 
 
 # ---------------------------------------------------------------------------
 # Fetch: routes, predictions (per route), vehicles (all buses, one call)

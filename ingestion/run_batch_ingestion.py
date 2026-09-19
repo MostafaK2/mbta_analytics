@@ -13,11 +13,11 @@ def run_batch_ingestion(year):
     print(f"Processing Bus Historical Data...")
     bus_historical_results = process_bus_historical_year(year, BUS_ARRIVAL_DEPARTURE_ITEM_IDS[year])
 
-    # Process GTFS Static Archive Data
-    print(f"Processing GTFS Static Archive Data...")
-    gtfs_archive_results = process_gtfs_archive_year(year)
+    # # Process GTFS Static Archive Data
+    # print(f"Processing GTFS Static Archive Data...")
+    # gtfs_archive_results = process_gtfs_archive_year(year)
 
-    print(f"Batch ingestion completed for year...")
+    # print(f"Batch ingestion completed for year...")
 
 
 def run_backfill_ingestion(start_year, end_year):

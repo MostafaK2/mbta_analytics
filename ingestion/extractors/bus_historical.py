@@ -109,7 +109,7 @@ def stream_zip_entry_to_gcs(zip_path: str, entry_name: str, blob_name: str) -> s
         print(f"File not found inside ZIP: {entry_name}")
 
 
-def upload_zip_contents_parallel(zip_path: str, year: int, max_workers: int = 4) -> list[str]:
+def upload_zip_contents_parallel(zip_path: str, year: int, max_workers: int = 20) -> list[str]:
     with zipfile.ZipFile(zip_path) as zf:
         csv_names = [n for n in zf.namelist() if n.lower().endswith(".csv")]
     

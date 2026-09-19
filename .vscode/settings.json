@@ -1,0 +1,3 @@
+{
+    "dbt.dbtPythonPathOverride": "/Users/mostafakamal/Documents/datascience/mbta_analytics/.venv/bin/python3"
+}
