@@ -58,11 +58,16 @@ def fetch_prediction_for_route(route_id: str) -> dict:
     collected_at = datetime.now(timezone.utc).isoformat()
     response.raise_for_status()
     payload = response.json()
-
+    data = payload.get("data", [])
+    if not data:
+        print(f"Route {route_id}: no predictions")
+        return None
+    
     raw_dict = {
         "collected_at": collected_at,
         "data": payload["data"]
     } 
+
     return raw_dict
 
 
@@ -71,6 +76,7 @@ def fetch_all_routes_prediction():
     with ThreadPoolExecutor(max_workers=20) as executor:
         results = list(executor.map(fetch_prediction_for_route, route_ids))
 
+    results = [result for result in results if result is not None]
     return results
 
 def upload_realtime_predictions_to_gcs(results):
