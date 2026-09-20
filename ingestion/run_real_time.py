@@ -9,9 +9,14 @@ def run_batch_ingestion():
     print(f"Starting batch ingestion for GTFS-RT")
     results = fetch_all_routes_prediction()
 
-    print(f"Starting GCS upload")
-    blob_name = upload_realtime_predictions_to_gcs(results)
-    Kestra.outputs({"blob_name": blob_name})
+    if results:
+        print(f"Starting GCS upload")
+        blob_name = upload_realtime_predictions_to_gcs(results)
+        Kestra.outputs({"blob_name": blob_name})
+    else:
+        print("fetch resulted in 0 outputs stop flow.")
+        raise RuntimeError("No predictions were fetched")
+        
     
 
 

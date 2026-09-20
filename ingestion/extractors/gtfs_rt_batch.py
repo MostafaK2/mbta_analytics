@@ -74,8 +74,13 @@ def fetch_all_routes_prediction():
     return results
 
 def upload_realtime_predictions_to_gcs(results):
+    batch_time = datetime.now(timezone.utc)
+    timestamp = batch_time.strftime("%Y%m%d_%H%M%S")
+    batch_loaded_at = batch_time.isoformat()
+
+
     json_data = "\n".join(
-        json.dumps(result)
+        json.dumps({**result, "batch_loaded_at": batch_loaded_at})
         for result in results
     )
 
