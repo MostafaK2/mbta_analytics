@@ -8,3 +8,11 @@ sources:
     tables:
       - name: bus_historical
       - name: raw_predictions
+        columns:
+          - name: event_id
+            tests:
+              - unique
+              - not_null
+          - name: prediction_id
+            tests: 
+              - not_null
