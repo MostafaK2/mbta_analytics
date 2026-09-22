@@ -1,4 +1,4 @@
-{{
+{# {{
     config(
         materialized='incremental',
         unique_key='schedule_id',
@@ -62,4 +62,4 @@ outputsql as (
 select * from outputsql
 {% if var('is_test_run', default=true) %}
 limit 100
-{% endif %}
+{% endif %} #}

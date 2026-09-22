@@ -1,4 +1,4 @@
-{{
+{# {{
     config(
         materialized='view'
     )
@@ -154,4 +154,4 @@ select
     collected_at,
     batch_loaded_at
 
-from reconstructed
+from reconstructed #}

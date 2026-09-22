@@ -50,7 +50,8 @@ def fetch_prediction_for_route(route_id: str) -> dict:
         f"{MBTA_API_BASE_URL}/predictions",
         headers=MBTA_API_HEADERS,
         params={
-            "filter[route]": route_id
+            "filter[route]": route_id,
+            "include": "schedule",
         },
         timeout=10,
     )
