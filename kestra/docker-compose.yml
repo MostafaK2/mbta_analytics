@@ -14,6 +14,13 @@ services:
       dockerfile: Dockerfile
     image: mbta-python:latest
   
+  mbta-dbt: 
+    profiles: ["build"]
+    build: 
+      context: ../dbt/mbta_dbt_analytics
+      dockerfile: Dockerfile
+    image: mbta-dbt:latest
+  
   kestra_postgres:
     image: postgres:18
     volumes:

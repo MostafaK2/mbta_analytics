@@ -1,0 +1,42 @@
+version: 2
+
+models:
+  - name: int_predictions_enriched
+    description: >
+      One row per prediction event, left-joined to its scheduled
+      arrival/departure via schedule_id, with reconstructed scheduled
+      timestamps and computed arrival/departure delay in seconds. Base
+      table for on-time-performance analysis; predictions without a
+      matching schedule (added/unscheduled trips) are kept with
+      has_schedule = false and null delay columns.
+    columns:
+      - name: table_event_id
+        description: Surrogate key from stg_raw_predictions; unique per prediction event per batch.
+        tests:
+          - unique
+          - not_null
+      - name: prediction_id
+        description: MBTA API prediction resource id.
+        tests:
+          - not_null
+      - name: schedule_id
+        description: FK to stg_bus_schedule.schedule_id. Null for unscheduled/added trips.
+      - name: route_id
+        tests:
+          - not_null
+      - name: trip_id
+      - name: stop_id
+        tests:
+          - not_null
+      - name: has_schedule
+        description: True if a matching schedule row was found for this prediction's schedule_id.
+        tests:
+          - not_null
+      - name: scheduled_arrival
+        description: Reconstructed scheduled arrival timestamp (service-day-aware, from GTFS HH:MM:SS).
+      - name: scheduled_departure
+        description: Reconstructed scheduled departure timestamp (service-day-aware, from GTFS HH:MM:SS).
+      - name: arrival_delay_seconds
+        description: predicted_arrival minus scheduled_arrival, in seconds. Positive = late.
+      - name: departure_delay_seconds
+        description: predicted_departure minus scheduled_departure, in seconds. Positive = late.

@@ -39,6 +39,7 @@ def fetch_bus_routes() -> list[str]:
     data = response.json()["data"]
     return [route["id"] for route in data]
 
+# keep for now but change later. (currently very expensive)
 def fetch_prediction_for_route(route_id: str) -> dict:
     """
     Predicted arrival/departure times for buses currently en route,
@@ -50,7 +51,7 @@ def fetch_prediction_for_route(route_id: str) -> dict:
         headers=MBTA_API_HEADERS,
         params={
             "filter[route]": route_id,
-            "include": "schedule,stop,route,trip,vehicle",
+            "include": "schedule",
         },
         timeout=10,
     )
@@ -65,7 +66,8 @@ def fetch_prediction_for_route(route_id: str) -> dict:
     
     raw_dict = {
         "collected_at": collected_at,
-        "data": payload["data"]
+        "data": payload["data"],
+        "included": payload.get("included", [])
     } 
 
     return raw_dict

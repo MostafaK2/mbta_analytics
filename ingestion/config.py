@@ -25,8 +25,11 @@ CHUNK_SIZE = 8 * 1024 * 1024
 # CLOUD STORAGE PREFIXES
 GCS_RAW_PREFIX = "raw"
 GCS_BUS_HISTORICAL_PREFIX = f"{GCS_RAW_PREFIX}/bus_historical"
+GCS_SCHEDULES_PREFIX = f"{GCS_RAW_PREFIX}/schedules"
 GCS_GTFS_ARCHIVE_PREFIX = f"{GCS_RAW_PREFIX}/gtfs_archive"
 GCS_REALTIME_PREFIX = f"{GCS_RAW_PREFIX}/realtime"
+
+SCHEDULE_STATE_BLOB = "state/mbta_schedule_last_modified.json"
 
 for _dir in (RAW_BUS_HISTORICAL_DIR, RAW_GTFS_ARCHIVE_DIR, RAW_REALTIME_DIR):
     _dir.mkdir(parents=True, exist_ok=True)

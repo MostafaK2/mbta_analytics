@@ -1,0 +1,61 @@
+id: mbta_realtime_gtfs_rt
+namespace: mbta
+
+tasks:
+  - id: extract
+    type: io.kestra.plugin.scripts.python.Commands
+    taskRunner:
+      type: io.kestra.plugin.scripts.runner.docker.Docker
+    containerImage: mbta-python:latest
+    pythonVersion: "3.14"
+    inputFiles:
+      creds.json: "{{ secret('GCP_SERVICE_ACCOUNT') }}"
+    env:
+      PYTHONPATH: /app/repo
+      GOOGLE_APPLICATION_CREDENTIALS: creds.json
+      MBTA_API_KEY: "{{ secret(key='MBTA_API_KEY') }}"
+      GCS_BUCKET_NAME: "{{ secret(key='GCS_BUCKET_NAME') }}"
+    commands:
+      - python -m ingestion.run_real_time
+
+  - id: load_to_bq
+    type: io.kestra.plugin.gcp.bigquery.LoadFromGcs
+    serviceAccount: "{{ secret('GCP_SERVICE_ACCOUNT') }}"
+    projectId: "{{ secret('GCP_PROJECT_ID') }}"
+    from:
+      # exact file the extract task just wrote — no polling, no guessing
+      - "gs://{{ secret('GCS_BUCKET_NAME') }}/{{ outputs.extract.vars.blob_name }}"
+    destinationTable: "{{ secret('GCP_PROJECT_ID') }}.mk_mbta_dataset.raw_predictions"
+    format: JSON
+    autodetect: true          # only matters on the very first load; ignored once the table has a fixed schema
+    createDisposition: CREATE_IF_NEEDED
+    writeDisposition: WRITE_APPEND
+
+
+  - id: dbt_run
+    type: io.kestra.plugin.dbt.cli.DbtCLI
+    taskRunner:
+      type: io.kestra.plugin.scripts.runner.docker.Docker
+    containerImage: mbta-dbt:latest
+    inputFiles:
+      creds.json: "{{ secret('GCP_SERVICE_ACCOUNT') }}"
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS: creds.json
+    profiles: |
+      mbta_dbt_analytics:
+        target: dev
+        outputs:
+          dev:
+            type: bigquery
+            method: service-account
+            keyfile: creds.json
+            project: "{{ secret('GCP_PROJECT_ID') }}"
+            dataset: mbta_dev
+            location: US
+            threads: 8
+            job_execution_timeout_seconds: 300
+            job_retries: 1
+            priority: interactive
+    commands:
+      - >-
+        dbt run --project-dir /app/dbt/mbta_analytics --select base_stg_raw_predictions --vars '{"is_test_run": false}'
