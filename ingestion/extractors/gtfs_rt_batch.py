@@ -26,7 +26,7 @@ BUS_ROUTE_TYPE = 3
 # Fetch: routes, predictions (per route), vehicles (all buses, one call)
 # Each returns a plain list[dict] — no pandas involved.
 # ---------------------------------------------------------------------------
- 
+
 def fetch_bus_routes() -> list[str]:
     """All bus route IDs (route_type=3) — needed because /predictions has no route_type filter."""
     response = requests.get(
@@ -39,7 +39,7 @@ def fetch_bus_routes() -> list[str]:
     data = response.json()["data"]
     return [route["id"] for route in data]
 
-# keep for now but change later. (currently very expensive)
+# Optimize later with service date and fields fetching and PAGINATION LIke pull_mbta_schedule.py
 def fetch_prediction_for_route(route_id: str) -> dict:
     """
     Predicted arrival/departure times for buses currently en route,
@@ -50,8 +50,7 @@ def fetch_prediction_for_route(route_id: str) -> dict:
         f"{MBTA_API_BASE_URL}/predictions",
         headers=MBTA_API_HEADERS,
         params={
-            "filter[route]": route_id,
-            "include": "schedule",
+            "filter[route]": route_id
         },
         timeout=10,
     )
@@ -66,8 +65,7 @@ def fetch_prediction_for_route(route_id: str) -> dict:
     
     raw_dict = {
         "collected_at": collected_at,
-        "data": payload["data"],
-        "included": payload.get("included", [])
+        "data": payload["data"]
     } 
 
     return raw_dict
@@ -75,7 +73,7 @@ def fetch_prediction_for_route(route_id: str) -> dict:
 
 def fetch_all_routes_prediction(): 
     route_ids = fetch_bus_routes()
-    with ThreadPoolExecutor(max_workers=20) as executor:
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as executor:
         results = list(executor.map(fetch_prediction_for_route, route_ids))
 
     results = [result for result in results if result is not None]
