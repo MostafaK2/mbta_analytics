@@ -28,7 +28,7 @@ BUS_ROUTE_TYPE = 3
 PAGE_LIMIT = 500
 
 # All this pipeline needs -- shrinks the payload on the routes that actually changed.
-SCHEDULE_FIELDS = "arrival_time,departure_time"
+SCHEDULE_FIELDS = "arrival_time,departure_time,direction_id,drop_off_type,stop_headsign,stop_sequence,timepoint" 
 
 def _content_hash(data: list[dict]) -> str:
     """
@@ -119,7 +119,7 @@ def fetch_schedule_for_route(
     params = {
         "filter[route]": route_id,
         "filter[date]": date_str,
-        "fields[schedule]": SCHEDULE_FIELDS,
+       "fields[schedule]": SCHEDULE_FIELDS,
         "page[limit]": PAGE_LIMIT,
     }
     headers = dict(MBTA_API_HEADERS)

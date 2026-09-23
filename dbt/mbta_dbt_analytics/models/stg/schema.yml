@@ -16,3 +16,4 @@ sources:
           - name: prediction_id
             tests: 
               - not_null
+      - name: raw_schedules
